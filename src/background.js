@@ -6,7 +6,7 @@
 // See https://developer.chrome.com/extensions/background_pages
 
 const summary = [];
-const OPENAI_API_KEY = '<your API key>';
+const OPENAI_API_KEY = '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';
 const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
 const headers = {
@@ -36,18 +36,21 @@ chrome.tabs.onActivated.addListener(() => {
     const validText = getValidLengthText(modifiedText);
     console.log(validText)
 
-    generateSummary(validText).then((res) => {
-      console.log(res);
-    }).catch((e) => {
-      console.log(e);
-    })
-    console.log("this is summary")
+    const serverRes = await sendToExpressServer(validText)
+    console.log(serverRes)
+
+    //   generateSummary(validText).then((res) => {
+    //     console.log(res);
+    //   }).catch((e) => {
+    //     console.log(e);
+    //   })
+    //   console.log("this is summary")
+    // }
+    // function analyzePage() {
+    //   const pageContent = document.documentElement.innerHTML;
+    //   // console.log(pageContent)
+    //   return pageContent;
   }
-  // function analyzePage() {
-  //   const pageContent = document.documentElement.innerHTML;
-  //   // console.log(pageContent)
-  //   return pageContent;
-  // }
 
   function extractContentAndHTML() {
     const bodyCopy = document.body.cloneNode(true);
@@ -101,6 +104,44 @@ chrome.tabs.onActivated.addListener(() => {
 
   function removeWideSpaces(content) {
     return content.replace(/\s+/g, ' ').trim();
+  }
+
+  async function sendToExpressServer(validText) {
+    const serverUrl = 'http://localhost:3000/make-openai-request';
+
+    const requestData = {
+      text: validText,
+    };
+
+    try {
+      const res = fetch(serverUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      }).then(res => {
+        console.log(res.text())
+        chrome.runtime.sendMessage(res.text())
+        console.log("mesage sent")
+      })
+        .catch(error => console.log('error', error));
+
+      console.log("response ")
+      console.log(res)
+
+
+      if (res.ok) {
+        responseTxt = await res.body
+        console.log(responseTxt)
+        console.log('Text sent to Express server successfully.');
+        return responseTxt
+      } else {
+        console.error('Failed to send text to Express server.');
+      }
+    } catch (error) {
+      console.error('Error sending text to Express server:', error);
+    }
   }
 
   async function generateSummary(content) {

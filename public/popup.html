@@ -9,13 +9,14 @@
     <div class="app">
       <p class="counter-label">Let's Analyze</p>
       <div class="button-container">
-        <button id="decrementBtn" class="button">Provide Summary</button>
+        <button id="decrementBtn" onclick="showSummary()" class="button">Provide Summary</button>
         <button id="incrementBtn" class="button">Provide Major Points</button>
       </div>
 
       <hr class="divider" />
 
       <p class="title">Ready! To Analyze</p>
+      <p id="summary"></p>
     </div>
 
     <script src="popup.js"></script>
