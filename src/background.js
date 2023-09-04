@@ -6,7 +6,7 @@
 // See https://developer.chrome.com/extensions/background_pages
 
 const summary = [];
-const OPENAI_API_KEY = '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';
+const OPENAI_API_KEY = '<your API key>';
 const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
 const headers = {
